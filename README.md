@@ -200,39 +200,35 @@ transformValidationResult(result: ValidationResult): TransformedValidationRespon
 ### Environment Variables
 
 ```env
-# Provider Selection
-ADDRESS_VALIDATION_PROVIDER=mock  # or 'smartystreets'
+# Application
+NODE_ENV=development
+PORT=3000
 
 # Redis Configuration
 REDIS_HOST=localhost
 REDIS_PORT=6379
 REDIS_PASSWORD=
+REDIS_DB=0
 
-# SmartyStreets (Production)
+# SmartyStreets Configuration (optional - if provided, uses SmartyStreets; otherwise uses mock)
 SMARTY_AUTH_ID=your_auth_id
 SMARTY_AUTH_TOKEN=your_auth_token
+
+# Logging
+LOG_LEVEL=info
+
+# Health Check
+HEALTH_CHECK_REDIS_TIMEOUT=5000
 ```
 
-### Provider Switching
+### Provider Selection
 
-Configure via `providers.module.ts`:
+The service automatically selects the validation provider based on environment configuration:
 
-```typescript
-const providerMap = {
-  mock: MockAddressValidationProvider,
-  smartystreets: SmartyStreetsAddressValidationProvider,
-};
+- **SmartyStreets Provider**: Used when both `SMARTY_AUTH_ID` and `SMARTY_AUTH_TOKEN` are configured
+- **Mock Provider**: Used when SmartyStreets credentials are not provided (ideal for development/testing)
 
-@Module({
-  providers: [
-    {
-      provide: 'AddressValidationProvider',
-      useClass: providerMap[configService.get('ADDRESS_VALIDATION_PROVIDER')],
-    },
-  ],
-})
-export class ProvidersModule {}
-```
+This eliminates the need for an explicit provider selection environment variable.
 
 ## Development Setup
 
