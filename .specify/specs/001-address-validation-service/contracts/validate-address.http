@@ -1,0 +1,156 @@
+### 
+
+# Address Validation API Documentation
+# POST /api/v1/validate-address
+# Validates a US address using third-party provider with caching
+
+
+### Valid Address Example
+
+POST http://localhost:3000/api/v1/validate-address HTTP/1.1
+Content-Type: application/json
+
+{
+  "address": "1600 Pennsylvania Ave NW, Washington DC 20500"
+}
+
+
+### Expected Response (200 OK)
+
+# {
+# "status": "valid",
+# "inputAddress": "1600 Pennsylvania Ave NW, Washington DC 20500",
+# "standardizedAddress": {
+# "streetNumber": "1600",
+# "streetName": "Pennsylvania",
+# "streetSuffix": "Ave",
+# "secondaryDesignator": null,
+# "secondaryNumber": null,
+# "city": "Washington",
+# "state": "DC",
+# "zipCode": "20500",
+# "zipPlus4": "0003"
+# }
+# }
+
+
+### Corrected Address Example (with minor typos)
+
+POST http://localhost:3000/api/v1/validate-address HTTP/1.1
+Content-Type: application/json
+
+{
+  "address": "1600 pennsylvania ave nw washington dc 20500"
+}
+
+
+### Expected Response (200 OK)
+
+# {
+# "status": "corrected", <- this the telling the address had typos
+# "inputAddress": "1600 pennsylvania ave nw washington dc 20500",
+# "standardizedAddress": {
+# "streetNumber": "1600",
+# "streetName": "Pennsylvania",
+# "streetSuffix": "Ave",
+# "city": "Washington",
+# "state": "DC",
+# "zipCode": "20500",
+# "zipPlus4": "0003"
+# }
+# }
+
+
+### Unverifiable Address Example
+
+POST http://localhost:3000/api/v1/validate-address HTTP/1.1
+Content-Type: application/json
+
+{
+  "address": "123 Fake Street, Nowhere USA"
+}
+
+
+### Expected Response (200 OK)
+
+# {
+# "status": "unverifiable",
+# "inputAddress": "123 Fake Street, Nowhere USA",
+# "standardizedAddress": null
+# }
+
+
+### Invalid Request (Missing Address Field)
+
+POST http://localhost:3000/api/v1/validate-address HTTP/1.1
+Content-Type: application/json
+
+{
+  "location": "1600 Pennsylvania Ave NW"
+}
+
+
+### Expected Response (400 Bad Request)
+
+# {
+# "statusCode": 400,
+# "message": "Validation failed",
+# "error": "Bad Request"
+# }
+
+
+### Invalid Request (Empty Address)
+
+POST http://localhost:3000/api/v1/validate-address HTTP/1.1
+Content-Type: application/json
+
+{
+  "address": ""
+}
+
+
+### Expected Response (400 Bad Request)
+
+# {
+# "statusCode": 400,
+# "message": "Address cannot be empty",
+# "error": "Bad Request"
+# }
+
+
+### Rate Limit Exceeded
+
+POST http://localhost:3000/api/v1/validate-address HTTP/1.1
+Content-Type: application/json
+
+{
+  "address": "1600 Pennsylvania Ave NW, Washington DC 20500"
+}
+
+
+### Expected Response (429 Too Many Requests)
+
+# {
+# "statusCode": 429,
+# "message": "Too Many Requests",
+# "error": "Too Many Requests"
+# }
+
+
+### Service Unavailable (Provider Down)
+
+POST http://localhost:3000/api/v1/validate-address HTTP/1.1
+Content-Type: application/json
+
+{
+  "address": "1600 Pennsylvania Ave NW, Washington DC 20500"
+}
+
+
+### Expected Response (503 Service Unavailable)
+
+# {
+# "statusCode": 503,
+# "message": "Service Unavailable",
+# "error": "Service Unavailable"
+# }

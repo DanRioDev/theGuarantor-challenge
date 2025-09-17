@@ -263,12 +263,12 @@ curl -X POST http://localhost:3000/api/v1/validate-address \
 
 ## Production Considerations
 
-- **Rate Limiting:** Implement at API gateway level to prevent abuse
-- **Monitoring:** Add metrics for cache hit rates, provider response times, error rates
-- **Security:** Validate all inputs, sanitize outputs, secure API keys
-- **Scaling:** Redis cluster for cache, horizontal pod scaling for service
-- **Circuit Breaker:** Already implemented for provider resilience
-- **Logging:** Structured logging with request IDs for tracing
+- **Rate Limiting:** Implemented at the application level using Redis-based rate limiter (100 requests per minute per IP) with fail-open behavior when Redis is unavailable
+- **Monitoring:** Health checks implemented for Redis connectivity; consider adding metrics collection for cache hit rates, provider response times, and error rates in production
+- **Security:** Input validation with class-validator, API keys secured via environment variables, CORS enabled
+- **Scaling:** Single Redis instance for caching; consider Redis cluster for high availability and horizontal pod scaling for the service
+- **Circuit Breaker:** Implemented for SmartyStreets provider resilience with configurable timeouts and error thresholds
+- **Logging:** Structured JSON logging with Pino; consider adding request ID middleware for tracing
 
 ## Testing Strategy
 
