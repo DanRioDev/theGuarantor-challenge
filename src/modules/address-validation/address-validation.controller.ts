@@ -7,14 +7,14 @@ import {
   Inject,
   UseGuards,
 } from '@nestjs/common';
-import { ValidateAddressDto } from './validate-address.dto';
+import { ValidateAddressDto } from './dto/validate-address.dto';
 import type { AddressValidationProvider } from './providers/address-validation.provider';
-import { CachingService } from './redis/caching.service';
+import { CachingService } from './services/caching.service';
 import { ResponseTransformationService } from './services/response-transformation.service';
-import { RateLimiterGuard } from './common/rate-limiter.guard';
+import { RateLimiterGuard } from '../../common/rate-limiter.guard';
 
 @Controller('api/v1')
-export class ValidateAddressController {
+export class AddressValidationController {
   constructor(
     @Inject('AddressValidationProvider')
     private readonly provider: AddressValidationProvider,

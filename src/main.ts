@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { ValidationPipe } from '@nestjs/common';
 import { Logger } from 'nestjs-pino';
 import { AppModule } from './app.module';
@@ -7,7 +8,7 @@ import { AllExceptionsFilter } from './common/all-exceptions.filter';
 const DEFAULT_PORT = 3000;
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(), {
     // Use Pino for structured JSON logging
     logger: false, // Disable default logger, will be replaced by Pino
   });

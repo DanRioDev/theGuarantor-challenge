@@ -1,56 +1,41 @@
 import { Injectable, Logger } from '@nestjs/common';
-import CircuitBreaker from 'opossum';
 
 @Injectable()
 export class CircuitBreakerService {
   private readonly logger = new Logger(CircuitBreakerService.name);
-  private readonly circuitBreakers = new Map<string, CircuitBreaker>();
+  private failureCount = 0;
+  private lastFailureTime?: Date;
+  private readonly failureThreshold = 5; // Number of failures before opening
+  private readonly timeoutMs = 60000; // 1 minute timeout
 
-  createCircuitBreaker<T extends any[], R>(
-    name: string,
-    fn: (...args: T) => Promise<R>,
-    options: CircuitBreaker.Options = {},
-  ): (...args: T) => Promise<R> {
-    const defaultOptions: CircuitBreaker.Options = {
-      timeout: 10000, // 10 seconds
-      errorThresholdPercentage: 50,
-      resetTimeout: 30000, // 30 seconds
-      ...options,
-    };
-
-    const breaker = new CircuitBreaker(fn, defaultOptions);
-
-    breaker.on('open', () => {
-      this.logger.warn(`Circuit breaker "${name}" opened - switching to fallback mode`);
-    });
-
-    breaker.on('close', () => {
-      this.logger.log(`Circuit breaker "${name}" closed - service restored`);
-    });
-
-    breaker.on('halfOpen', () => {
-      this.logger.log(`Circuit breaker "${name}" half-open - testing service recovery`);
-    });
-
-    breaker.on('fallback', (result) => {
-      this.logger.warn(`Circuit breaker "${name}" fallback triggered`, { result });
-    });
-
-    this.circuitBreakers.set(name, breaker);
-
-    return breaker.fire.bind(breaker);
-  }
-
-  getCircuitBreaker(name: string): CircuitBreaker | undefined {
-    return this.circuitBreakers.get(name);
-  }
-
-  async getStats(name: string) {
-    const breaker = this.circuitBreakers.get(name);
-    if (breaker) {
-      return breaker.stats;
+  isOpen(): boolean {
+    if (this.failureCount < this.failureThreshold) {
+      return false;
     }
-    return null;
+
+    if (!this.lastFailureTime) {
+      return false;
+    }
+
+    const timeSinceLastFailure = Date.now() - this.lastFailureTime.getTime();
+    if (timeSinceLastFailure > this.timeoutMs) {
+      // Reset after timeout
+      this.failureCount = 0;
+      return false;
+    }
+
+    return true;
+  }
+
+  recordSuccess(): void {
+    this.failureCount = 0;
+    this.lastFailureTime = undefined;
+  }
+
+  recordFailure(): void {
+    this.failureCount++;
+    this.lastFailureTime = new Date();
+    this.logger.warn(`Circuit breaker failure recorded. Count: ${this.failureCount}`);
   }
 }
 

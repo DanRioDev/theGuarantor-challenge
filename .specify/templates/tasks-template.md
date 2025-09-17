@@ -37,31 +37,31 @@
 - Include exact file paths in descriptions
 
 ## Path Conventions
-- **Single project**: `src/`, `tests/` at repository root
-- **Web app**: `backend/src/`, `frontend/src/`
-- **Mobile**: `api/src/`, `ios/src/` or `android/src/`
+- **Single project**: `src/modules/`, `tests/e2e/`, `tests/unit/` at repository root
+- **Web app**: `backend/src/modules/`, `frontend/src/`
+- **Mobile**: `api/src/modules/`, `ios/src/` or `android/src/`
 - Paths shown below assume single project - adjust based on plan.md structure
 
 ## Phase 3.1: Setup
 - [ ] T001 Create project structure per implementation plan
-- [ ] T002 Initialize [language] project with [framework] dependencies
-- [ ] T003 [P] Configure linting and formatting tools
+- [ ] T002 Initialize TypeScript/NestJS project with @nestjs/cli dependencies
+- [ ] T003 [P] Configure ESLint and Prettier for TypeScript
 
 ## Phase 3.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 3.3
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
-- [ ] T004 [P] Contract test POST /api/users in tests/contract/test_users_post.py
-- [ ] T005 [P] Contract test GET /api/users/{id} in tests/contract/test_users_get.py
-- [ ] T006 [P] Integration test user registration in tests/integration/test_registration.py
-- [ ] T007 [P] Integration test auth flow in tests/integration/test_auth.py
+- [ ] T004 [P] Contract test POST /api/users in tests/e2e/contract/test_users_post.e2e-spec.ts
+- [ ] T005 [P] Contract test GET /api/users/{id} in tests/e2e/contract/test_users_get.e2e-spec.ts
+- [ ] T006 [P] Integration test user registration in tests/e2e/test_registration.e2e-spec.ts
+- [ ] T007 [P] Integration test auth flow in tests/e2e/test_auth.e2e-spec.ts
 
 ## Phase 3.3: Core Implementation (ONLY after tests are failing)
-- [ ] T008 [P] User model in src/models/user.py
-- [ ] T009 [P] UserService CRUD in src/services/user_service.py
-- [ ] T010 [P] CLI --create-user in src/cli/user_commands.py
-- [ ] T011 POST /api/users endpoint
-- [ ] T012 GET /api/users/{id} endpoint
-- [ ] T013 Input validation
-- [ ] T014 Error handling and logging
+- [ ] T008 [P] User module in src/modules/user/user.module.ts
+- [ ] T009 [P] UserService CRUD in src/modules/user/user.service.ts
+- [ ] T010 [P] UserController endpoints in src/modules/user/user.controller.ts
+- [ ] T011 [P] User DTOs in src/modules/user/dto/
+- [ ] T012 [P] User entities in src/modules/user/entities/
+- [ ] T013 Input validation with class-validator
+- [ ] T014 Error handling and logging with @nestjs/common
 
 ## Phase 3.4: Integration
 - [ ] T015 Connect UserService to DB

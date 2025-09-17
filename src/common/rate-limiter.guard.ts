@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { RedisService } from '../redis/redis.service';
 import { Logger } from '@nestjs/common';
+import { ErrorHandler } from '../utils/error-handling.util';
 
 @Injectable()
 export class RateLimiterGuard implements CanActivate {
@@ -50,10 +51,12 @@ export class RateLimiterGuard implements CanActivate {
       }
 
       // If Redis is unavailable, allow the request (fail open)
-      this.logger.error('Rate limiter Redis error, allowing request', {
-        error: error.message,
-        clientIp,
-      });
+      ErrorHandler.logWarning(
+        this.logger,
+        'Rate limiter Redis error, allowing request',
+        error,
+        { clientIp },
+      );
       return true;
     }
   }
@@ -69,20 +72,33 @@ export class RateLimiterGuard implements CanActivate {
   }
 
   private async getCurrentCount(key: string): Promise<number> {
-    const redis = this.redisService.getClient();
-    const count = await redis.get(key);
-    return count ? parseInt(count, 10) : 0;
+    return ErrorHandler.safeExecuteWithDefault(
+      async () => {
+        const redis = this.redisService.getClient();
+        const count = await redis.get(key);
+        return count ? parseInt(count, 10) : 0;
+      },
+      this.logger,
+      `Getting current count for key ${key}`,
+      0,
+    );
   }
 
   private async incrementCount(key: string, windowMs: number): Promise<void> {
-    const redis = this.redisService.getClient();
+    await ErrorHandler.safeExecute(
+      async () => {
+        const redis = this.redisService.getClient();
 
-    // Use Redis MULTI to atomically increment and set expiration
-    const multi = redis.multi();
-    multi.incr(key);
-    multi.pexpire(key, windowMs);
+        // Use Redis MULTI to atomically increment and set expiration
+        const multi = redis.multi();
+        multi.incr(key);
+        multi.pexpire(key, windowMs);
 
-    await multi.exec();
+        await multi.exec();
+      },
+      this.logger,
+      `Incrementing count for key ${key}`,
+    );
   }
 }
 

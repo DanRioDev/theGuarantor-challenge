@@ -5,9 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HealthModule } from './health/health.module';
 import { RedisModule } from './redis/redis.module';
-import { ProvidersModule } from './providers/providers.module';
-import { ValidateAddressController } from './validate-address.controller';
-import { ResponseTransformationService } from './services/response-transformation.service';
+import { AddressValidationModule } from './modules/address-validation/address-validation.module';
 import { LoggerModule } from 'nestjs-pino';
 
 @Module({
@@ -20,9 +18,9 @@ import { LoggerModule } from 'nestjs-pino';
     TerminusModule,
     HealthModule,
     RedisModule,
-    ProvidersModule,
+    AddressValidationModule,
   ],
-  controllers: [AppController, ValidateAddressController],
-  providers: [AppService, ResponseTransformationService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

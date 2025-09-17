@@ -55,11 +55,12 @@ When creating this spec from a user prompt:
 ## User Scenarios & Testing *(mandatory)*
 
 ### Primary User Story
-[Describe the main user journey in plain language]
+As a user, I want to submit an address for validation so that I can ensure it's correct before processing.
 
 ### Acceptance Scenarios
-1. **Given** [initial state], **When** [action], **Then** [expected outcome]
-2. **Given** [initial state], **When** [action], **Then** [expected outcome]
+1. **Given** a valid address format, **When** the user submits it via POST /api/validate-address, **Then** the system returns validation results with corrections if needed
+2. **Given** an invalid address format, **When** the user submits it, **Then** the system returns error messages for each invalid field
+3. **Given** a request with missing required fields, **When** submitted, **Then** the system returns validation errors for missing data
 
 ### Edge Cases
 - What happens when [boundary condition]?
@@ -68,11 +69,11 @@ When creating this spec from a user prompt:
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
-- **FR-001**: System MUST [specific capability, e.g., "allow users to create accounts"]
-- **FR-002**: System MUST [specific capability, e.g., "validate email addresses"]  
-- **FR-003**: Users MUST be able to [key interaction, e.g., "reset their password"]
-- **FR-004**: System MUST [data requirement, e.g., "persist user preferences"]
-- **FR-005**: System MUST [behavior, e.g., "log all security events"]
+- **FR-001**: System MUST validate address input using external address validation provider
+- **FR-002**: System MUST return validation results with corrections and suggestions if needed
+- **FR-003**: Users MUST be able to submit addresses via REST API
+- **FR-004**: System MUST persist validation results in cache for improved performance
+- **FR-005**: System MUST handle invalid or malformed addresses with appropriate error responses
 
 *Example of marking unclear requirements:*
 - **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]
