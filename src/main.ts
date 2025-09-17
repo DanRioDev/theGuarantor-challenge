@@ -4,6 +4,8 @@ import { Logger } from 'nestjs-pino';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/all-exceptions.filter';
 
+const DEFAULT_PORT = 3000;
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     // Use Pino for structured JSON logging
@@ -28,16 +30,12 @@ async function bootstrap() {
   // Enable CORS for API access
   app.enableCors();
 
-  const port = process.env.PORT ?? 3000;
+  const port = process.env.PORT ?? DEFAULT_PORT;
   await app.listen(port);
 
   // Use structured logging instead of console.log
   const logger = app.get(Logger);
   logger.log(`Application is running on: http://localhost:${port}`);
 }
-try {
-  bootstrap();
-} catch (error) {
-  console.error('Bootstrap error:', error);
-  process.exit(1);
-}
+
+bootstrap();
