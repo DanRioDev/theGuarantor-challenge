@@ -1,0 +1,42 @@
+### Test: Corrected Address (Typo Correction)
+### This test validates that addresses with typos are corrected and return corrected status
+POST http://localhost:3000/api/v1/validate-address
+Content-Type: application/json
+
+{
+  "address": "123 Main Street, Springfeild, IL 62701"
+}
+
+### Expected Response (200 OK):
+### {
+###   "status": "corrected",
+###   "inputAddress": "123 Main Street, Springfeild, IL 62701",
+###   "originalInput": "123 Main Street, Springfeild, IL 62701",
+###   "standardizedAddress": "123 Main St, Springfield, IL 62701-0000",
+###   "details": {
+###     "streetNumber": "123",
+###     "streetName": "Main",
+###     "streetSuffix": "St",
+###     "city": "Springfield",
+###     "state": "IL",
+###     "zipCode": "62701",
+###     "zipPlus4": "0000"
+###   }
+### }
+
+### Test: Corrected Address (Missing ZIP)
+POST http://localhost:3000/api/v1/validate-address
+Content-Type: application/json
+
+{
+  "address": "123 Main St, Springfield, IL"
+}
+
+### Test: Corrected Address (Street Suffix Abbreviation)
+POST http://localhost:3000/api/v1/validate-address
+Content-Type: application/json
+
+{
+  "address": "123 Main Street, Springfield, Illinois 62701"
+}
+

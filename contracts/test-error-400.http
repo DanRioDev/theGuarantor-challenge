@@ -1,0 +1,51 @@
+### Test: Bad Request (400) - Empty Address
+### This test validates that empty address strings return 400 Bad Request
+POST http://localhost:3000/api/v1/validate-address
+Content-Type: application/json
+
+{
+  "address": ""
+}
+
+### Expected Response (400 Bad Request):
+### {
+###   "statusCode": 400,
+###   "message": [
+###     "address should not be empty"
+###   ],
+###   "error": "Bad Request"
+### }
+
+### Test: Bad Request (400) - Missing Address Field
+POST http://localhost:3000/api/v1/validate-address
+Content-Type: application/json
+
+{}
+
+### Expected Response (400 Bad Request):
+### {
+###   "statusCode": 400,
+###   "message": [
+###     "address should not be empty",
+###     "address must be a string"
+###   ],
+###   "error": "Bad Request"
+### }
+
+### Test: Bad Request (400) - Non-String Address
+POST http://localhost:3000/api/v1/validate-address
+Content-Type: application/json
+
+{
+  "address": 12345
+}
+
+### Expected Response (400 Bad Request):
+### {
+###   "statusCode": 400,
+###   "message": [
+###     "address must be a string"
+###   ],
+###   "error": "Bad Request"
+### }
+

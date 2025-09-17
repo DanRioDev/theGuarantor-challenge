@@ -1,0 +1,32 @@
+### Test: Unverifiable Address
+### This test validates that non-existent addresses return unverifiable status
+POST http://localhost:3000/api/v1/validate-address
+Content-Type: application/json
+
+{
+  "address": "123 Fake Street, Nonexistent City, XX 00000"
+}
+
+### Expected Response (200 OK):
+### {
+###   "status": "unverifiable",
+###   "inputAddress": "123 Fake Street, Nonexistent City, XX 00000",
+###   "error": "Address could not be verified"
+### }
+
+### Test: Unverifiable Address (Invalid State)
+POST http://localhost:3000/api/v1/validate-address
+Content-Type: application/json
+
+{
+  "address": "123 Main St, Springfield, ZZ 62701"
+}
+
+### Test: Unverifiable Address (Invalid ZIP)
+POST http://localhost:3000/api/v1/validate-address
+Content-Type: application/json
+
+{
+  "address": "123 Main St, Springfield, IL 99999"
+}
+

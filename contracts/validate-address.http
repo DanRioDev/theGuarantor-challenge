@@ -1,0 +1,63 @@
+### Address Validation API Documentation
+### POST /api/v1/validate-address
+### Validates a US address using SmartyStreets provider with Redis caching
+###
+### Headers:
+### Content-Type: application/json
+###
+### Body:
+### {
+###   "address": "string"
+### }
+###
+### Response Status Codes:
+### 200 - Success (valid, corrected, or unverifiable)
+### 400 - Bad Request (invalid input)
+### 429 - Too Many Requests (rate limited)
+### 500 - Internal Server Error
+### 503 - Service Unavailable (provider/circuit breaker issues)
+###
+### Success Response Format:
+### {
+###   "status": "valid" | "corrected" | "unverifiable",
+###   "inputAddress": "string",
+###   "standardizedAddress": "string", // only for valid/corrected
+###   "originalInput": "string",       // only for corrected
+###   "details": {                     // only for valid/corrected
+###     "streetNumber": "string",
+###     "streetName": "string",
+###     "streetSuffix": "string",
+###     "secondaryDesignator": "string", // optional
+###     "secondaryNumber": "string",     // optional
+###     "city": "string",
+###     "state": "string",
+###     "zipCode": "string",
+###     "zipPlus4": "string"
+###   },
+###   "error": "string" // only for unverifiable
+### }
+
+### Example: Valid Address
+POST http://localhost:3000/api/v1/validate-address
+Content-Type: application/json
+
+{
+  "address": "123 Main St, Springfield, IL 62701"
+}
+
+### Example: Corrected Address
+POST http://localhost:3000/api/v1/validate-address
+Content-Type: application/json
+
+{
+  "address": "123 main street springfield illinois 62701"
+}
+
+### Example: Unverifiable Address
+POST http://localhost:3000/api/v1/validate-address
+Content-Type: application/json
+
+{
+  "address": "123 Fake Street, Nonexistent City, XX 00000"
+}
+

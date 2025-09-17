@@ -1,0 +1,26 @@
+### Test: Rate Limiting (429) - Too Many Requests
+### This test validates that excessive requests return 429 Too Many Requests
+### Note: This requires rate limiting implementation to be functional
+
+POST http://localhost:3000/api/v1/validate-address
+Content-Type: application/json
+
+{
+  "address": "123 Main St, Springfield, IL 62701"
+}
+
+### Expected Response (429 Too Many Requests):
+### {
+###   "statusCode": 429,
+###   "message": "Too Many Requests",
+###   "error": "Too Many Requests"
+### }
+
+### Test: Rate Limiting Headers
+### After rate limit is exceeded, check for proper headers
+### Expected Headers:
+### X-RateLimit-Limit: 100
+### X-RateLimit-Remaining: 0
+### X-RateLimit-Reset: 1640995200
+### Retry-After: 60
+
